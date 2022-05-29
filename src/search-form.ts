@@ -1,5 +1,7 @@
 import { renderBlock } from './lib.js'
 import Dates from './dates.js'
+import SearchFormData from './SearchFormData.interface.js'
+import Place from './Place.interface.js'
 
 export function renderSearchFormBlock (dateToday:string, lastDayNextMoth:string) :void {
 
@@ -11,7 +13,7 @@ export function renderSearchFormBlock (dateToday:string, lastDayNextMoth:string)
         <div class="row">
           <div>
             <label for="city">Город</label>
-            <input id="city" type="text" disabled value="Санкт-Петербург" />
+            <input id="city" type="text" name="city" disabled value="Санкт-Петербург" />
             <input type="hidden" disabled value="59.9386,30.3141" />
           </div>
           <!--<div class="providers">
@@ -40,4 +42,47 @@ export function renderSearchFormBlock (dateToday:string, lastDayNextMoth:string)
     </form>
     `
   )
+}
+
+export function processingSearchForm(e): void {
+  e.preventDefault()
+
+  let allInputs = Array.from(
+    e.target.querySelectorAll('input:not([type="hidden"])')
+  )
+
+  let dataSearch: SearchFormData = {
+    city: '',
+    checkin: '',
+    checkout: '',
+    price: ''
+  }
+
+  allInputs.forEach(function(field:any) {
+    dataSearch[field.name] = field.value
+  })
+
+  search(dataSearch, resultSearch)
+}
+
+export function search(dataSearch: SearchFormData, callBack): void {
+  console.log(dataSearch)
+  let objPlace: Place = {}
+  callBack('Error', objPlace);
+}
+
+interface ResultSearch {
+  (error?: Error, place?: Place): void
+}
+
+const resultSearch: ResultSearch = (error?: Error, place?: Place): void => {
+  console.log('callback')
+  setTimeout(function() {
+    if(Math.random() < 0.5) {
+      console.log(place)
+    } else {
+      console.error(error)
+    }
+  }, 1000)
+  
 }
